@@ -24,15 +24,6 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/txt_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
-
         <Button
             android:id="@+id/btnSend"
             android:layout_width="match_parent"

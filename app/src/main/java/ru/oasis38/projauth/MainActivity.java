@@ -27,6 +27,9 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,21 +37,19 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     public static String QR;
-    private static final String SAVED_SESSION = "";
     private String session;
-    public static String vError;
     private ZXingScannerView scannerView;
-    private TextView txtResult;
     private Button btnSend;
+
+    public static SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         scannerView = (ZXingScannerView)findViewById(R.id.zxscan);
-        txtResult = (TextView)findViewById(R.id.txt_result);
         scannerStart();
+        init();
 }
 
     @Override
@@ -60,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onStart() {
         super.onStart();
-
         scannerStart();
     }
 
@@ -72,17 +72,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         scannerView.setResultHandler(MainActivity.this);
                         scannerView.startCamera();
-
                     }
-
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         Toast.makeText(MainActivity.this, "You must accept this permission", Toast.LENGTH_SHORT).show();
                     }
-
                     @Override
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-
                     }
                 })
                 .check();
@@ -90,52 +86,56 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result rawResult) {
-        txtResult.setText(rawResult.getText());
         QR = rawResult.getText();
         btnSend = (Button)findViewById(R.id.btnSend);
         btnSend.setEnabled(true);
-//        sendData();
-//        if(vError == "com.android.volley.AuthFailureError" ) {
-//            Intent intent = new Intent(this, AuthActivity.class);
-//            startActivity(intent);
-//        }
-
-////        txtResult.setText(rawResult.getText());
-//        if (checkAuth()) {
-//            txtResult.setText("Авторизован");
-//        } else {
-//            txtResult.setText("Не авторизован");
-////            Auth auth = new Auth();
-//            QR = rawResult.getText();
-//            Intent intent = new Intent(this, AuthActivity.class);
-//            startActivity(intent);
-//        }
-
     }
 
     public void onClickSend(View view) {
         sendData();
     }
 
+    private void init() {
+        pref = getSharedPreferences("saved_data", MODE_PRIVATE);
+        Boolean firstStart = pref.getBoolean("firstStart", false);
+        if (!firstStart) {
+            openPass();
+            printMessage("Необходимо задать пароль");
+        }
+    }
+
+    private void getSession() {
+        session = pref.getString("saved_session", "");
+    }
+
     private void sendData() {
-        SharedPreferences sPref = getPreferences(MODE_PRIVATE);
-        session = sPref.getString(SAVED_SESSION, "");
-
-
+        getSession();
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         String url = "http://10.1.1.227/t.masha/auth/?proj_api";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("Response !!!", response);
+                Log.d("checkQr: Response!", response);
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    Boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        printMessage("Успешно");
+                    } else {
+                        String msg = jsonResponse.getString("message");
+                        printMessage(msg);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
-                txtResult.setText( error.toString());
-                Log.d("error!!!", error.toString());
+                Log.d("checkQr: error!", error.toString());
                 NetworkResponse networkResponse = error.networkResponse;
                 if(networkResponse.statusCode == 401) {
+                    printMessage("Необходима авторизация");
                     openAuth();
                 }
             }
@@ -146,11 +146,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 params.put("q","checkQr");
                 params.put("qr", MainActivity.QR);
                 params.put("session", session);
-
                 return params;
             }
         };
-
         requestQueue.add(stringRequest);
     }
 
@@ -159,5 +157,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         startActivity(intent);
     }
 
+    private void openPass() {
+        Intent intent = new Intent(this, PassActivity.class);
+        startActivity(intent);
+    }
+
+    private void printMessage(String msg) {
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+    }
 
 }

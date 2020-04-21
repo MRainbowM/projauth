@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,13 +30,12 @@ import java.util.Map;
 public class AuthActivity extends AppCompatActivity {
     private Button btnSendPhone;
     private EditText etFIO, etPhone;
-    private TextView tvFIO, tvResult;
+    private TextView tvFIO;
 
-    protected String fio = "";
-    protected String phone = "";
-    protected String guid = "";
+    public static String fio = "", phone = "", guid = "";
 
-
+    public static String session = "";
+    public static Integer waiting = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,6 @@ public class AuthActivity extends AppCompatActivity {
 
         btnSendPhone = (Button)findViewById(R.id.btnSendPhone);
         tvFIO = (TextView)findViewById(R.id.tvFIO);
-        tvResult = (TextView)findViewById(R.id.tvResult);
-
         etFIO = (EditText)findViewById(R.id.etFIO);
         etPhone = (EditText)findViewById(R.id.etPhone);
 
@@ -59,7 +57,7 @@ public class AuthActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonQR = new JSONObject(strQR);
                     guid = jsonQR.getString("guid");
-                    postSendData();
+                    postStartLogin();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -67,7 +65,7 @@ public class AuthActivity extends AppCompatActivity {
         });
     }
 
-    public void postSendData() {
+    public void postStartLogin() {
         RequestQueue requestQueue = Volley.newRequestQueue(AuthActivity.this);
         String url = "http://10.1.1.227/t.masha/auth/?proj_api";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -78,7 +76,13 @@ public class AuthActivity extends AppCompatActivity {
                     JSONObject jsonResponse = new JSONObject(response);
                     Boolean success = jsonResponse.getBoolean("success");
                     if (success) {
-                        openCodeActivity(jsonResponse.getString("session"), jsonResponse.getInt("waiting"));
+                        session = jsonResponse.getString("session");
+                        waiting =  jsonResponse.getInt("waiting");
+                        printMessage("Введите код авторизации");
+                        openCodeActivity();
+                    } else {
+                        String msg = jsonResponse.getString("message");
+                        printMessage(msg);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -104,13 +108,13 @@ public class AuthActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void openCodeActivity(String session, Integer waiting){
-
+    private void openCodeActivity(){
         Intent intent = new Intent(this, CodeActivity.class);
-        intent.putExtra("session", session);
-        intent.putExtra("waiting", waiting);
         startActivity(intent);
+    }
 
+    private void printMessage(String msg) {
+        Toast.makeText(AuthActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

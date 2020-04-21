@@ -33,12 +33,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number"
+                android:maxLength="6" />
 
             <Button
                 android:id="@+id/btnSendCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="onClickSendCode"
                 android:text="Подтвердить" />
 
             <LinearLayout
@@ -51,13 +53,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:onClick="onClickRepeatSend"
                     android:text="Отправить еще раз" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnEditPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:onClick="onClickEditPhone"
                     android:text="изменить номер" />
             </LinearLayout>
 
@@ -67,7 +71,6 @@
             android:id="@+id/tvTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
