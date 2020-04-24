@@ -25,8 +25,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-//import static ru.oasis38.projauth.MainActivity.SAVED_SESSION;
-
 public class CodeActivity extends AppCompatActivity {
     private TextView tvTimer;
     private Button btnRepeatSend;
@@ -45,11 +43,8 @@ public class CodeActivity extends AppCompatActivity {
         btnRepeatSend = (Button)findViewById(R.id.btnRepeatSend);
         btnRepeatSend.setEnabled(false);
         etCode = (EditText)findViewById(R.id.etCode);
-//        Intent intent = getIntent();
-//        waiting = intent.getIntExtra("waiting", 0);
         waiting = AuthActivity.waiting;
         session = AuthActivity.session;
-
 
         runTimer();
     }

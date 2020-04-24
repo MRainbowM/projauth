@@ -32,10 +32,6 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
     }
 
-    public void offScaner(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
-
-    }
-
     @Override
     public void onAuthenticationError (int errMsgId, CharSequence errString) {
         printMessage("Ошибка аутентификации \n" + errString);
@@ -58,19 +54,8 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         appContext.startActivity(intent);
     }
 
-
-//    public void openMain(Context context) {
-//        Intent intent = new Intent(context, MainActivity.class);
-//        context.startActivity(intent);
-//    }
-
-
-
     private void printMessage(String msg) {
         Toast.makeText(appContext, msg, Toast.LENGTH_SHORT).show();
     }
-
-//    public void FingerprintHandler(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject) {
-//    }
 }
 
