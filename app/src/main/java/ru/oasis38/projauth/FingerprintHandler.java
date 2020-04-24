@@ -3,6 +3,7 @@ package ru.oasis38.projauth;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -31,6 +32,10 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         manager.authenticate(cryptoObject, cancellationSignal, 0, this, null);
     }
 
+    public void offScaner(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
+
+    }
+
     @Override
     public void onAuthenticationError (int errMsgId, CharSequence errString) {
         printMessage("Ошибка аутентификации \n" + errString);
@@ -48,7 +53,18 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     @Override
     public void onAuthenticationSucceeded (FingerprintManager.AuthenticationResult result) {
         printMessage("Аутентификация прошла успешно.");
+
+        Intent intent = new Intent(appContext, MainActivity.class);
+        appContext.startActivity(intent);
     }
+
+
+//    public void openMain(Context context) {
+//        Intent intent = new Intent(context, MainActivity.class);
+//        context.startActivity(intent);
+//    }
+
+
 
     private void printMessage(String msg) {
         Toast.makeText(appContext, msg, Toast.LENGTH_SHORT).show();

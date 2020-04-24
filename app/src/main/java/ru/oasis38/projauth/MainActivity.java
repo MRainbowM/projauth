@@ -97,11 +97,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private void init() {
         pref = getSharedPreferences("saved_data", MODE_PRIVATE);
-        Boolean firstStart = pref.getBoolean("firstStart", false);
-        if (!firstStart) {
-            openPass();
-            printMessage("Необходимо задать пароль");
-        }
     }
 
     private void getSession() {
@@ -154,11 +149,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private void openAuth() {
         Intent intent = new Intent(this, AuthActivity.class);
-        startActivity(intent);
-    }
-
-    private void openPass() {
-        Intent intent = new Intent(this, PassActivity.class);
         startActivity(intent);
     }
 

@@ -20,16 +20,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".EditPassActivity"></activity>
-        <activity android:name=".PassActivity" />
-        <activity android:name=".CodeActivity" />
-        <activity android:name=".AuthActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".PassActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CodeActivity" />
+        <activity android:name=".AuthActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

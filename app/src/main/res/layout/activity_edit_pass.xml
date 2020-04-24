@@ -21,11 +21,12 @@
             android:text="Введите пароль" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/etPass1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="numberPassword" />
+            android:inputType="numberPassword"
+            android:maxLength="4" />
 
         <TextView
             android:id="@+id/textView4"
@@ -34,17 +35,20 @@
             android:text="Повторите пароль" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/etPass2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="numberPassword"
+            android:maxLength="4" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnSavePass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="onClickSavePass"
             android:text="сохранить" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
