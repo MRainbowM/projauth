@@ -67,7 +67,7 @@ public class AuthActivity extends AppCompatActivity {
 
     public void postStartLogin() {
         RequestQueue requestQueue = Volley.newRequestQueue(AuthActivity.this);
-        String url = "http://10.1.1.227/t.masha/auth/?proj_api";
+        String url = getResources().getString(R.string.app_url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

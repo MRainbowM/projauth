@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public static SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         scannerView = (ZXingScannerView)findViewById(R.id.zxscan);
@@ -87,11 +86,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void handleResult(Result rawResult) {
         QR = rawResult.getText();
-        btnSend = (Button)findViewById(R.id.btnSend);
-        btnSend.setEnabled(true);
-    }
-
-    public void onClickSend(View view) {
         sendData();
     }
 
@@ -106,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private void sendData() {
         getSession();
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-        String url = "http://10.1.1.227/t.masha/auth/?proj_api";
+        String url = getResources().getString(R.string.app_url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -116,9 +110,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                     Boolean success = jsonResponse.getBoolean("success");
                     if (success) {
                         printMessage("Успешно");
+                        openPass();
                     } else {
                         String msg = jsonResponse.getString("message");
                         printMessage(msg);
+                        scannerStart();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -132,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 if(networkResponse.statusCode == 401) {
                     printMessage("Необходима авторизация");
                     openAuth();
+                } else {
+                    scannerStart();
                 }
             }
         }) {
@@ -149,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private void openAuth() {
         Intent intent = new Intent(this, AuthActivity.class);
+        startActivity(intent);
+    }
+
+    private void openPass() {
+        Intent intent = new Intent(this, PassActivity.class);
         startActivity(intent);
     }
 

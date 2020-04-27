@@ -22,16 +22,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimaryDark"
         android:orientation="vertical"
-        android:padding="8dp">
-
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:onClick="onClickSend"
-            android:text="Отправить" />
-
-    </LinearLayout>
+        android:padding="8dp"/>
 
 </RelativeLayout>
