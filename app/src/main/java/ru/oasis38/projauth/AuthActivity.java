@@ -68,7 +68,8 @@ public class AuthActivity extends AppCompatActivity {
     public void postStartLogin() {
         RequestQueue requestQueue = Volley.newRequestQueue(AuthActivity.this);
         String url = getResources().getString(R.string.app_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        url = url + "&q=startLogin&ph=" + AuthActivity.phone.toString() + "&fio=" + AuthActivity.fio.toString() + "&guid=" + AuthActivity.guid.toString();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("Response!!!", response);
@@ -93,17 +94,7 @@ public class AuthActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error.Response!!!", error.toString());
             }
-        }) {
-            @Override
-            public Map getParams() {
-                Map params = new HashMap();
-                params.put("q", "startLogin");
-                params.put("ph", phone);
-                params.put("fio", fio);
-                params.put("guid", guid);
-                return params;
-            }
-        };
+        }) {};
         Log.d("stringRequest!!!", stringRequest.toString());
         requestQueue.add(stringRequest);
     }

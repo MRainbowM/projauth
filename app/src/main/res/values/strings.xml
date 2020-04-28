@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Oasis Auth</string>
-    <string name="app_url">http://10.1.1.227/t.masha/auth/?proj_api</string>
+    <string name="app_url">https://svc.oasis38.ru/oasis_auth/?proj_api</string>
 </resources>

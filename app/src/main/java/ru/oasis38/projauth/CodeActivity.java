@@ -91,7 +91,8 @@ public class CodeActivity extends AppCompatActivity {
     public void postStartLogin() {
         RequestQueue requestQueue = Volley.newRequestQueue(CodeActivity.this);
         String url = getResources().getString(R.string.app_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        url = url + "&q=startLogin&ph=" + AuthActivity.phone.toString() + "&fio=" + AuthActivity.fio.toString() + "&guid=" + AuthActivity.guid.toString();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("Response!!!", response);
@@ -112,17 +113,7 @@ public class CodeActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error.Response!!!", error.toString());
             }
-        }) {
-            @Override
-            public Map getParams() {
-                Map params = new HashMap();
-                params.put("q", "startLogin");
-                params.put("ph", AuthActivity.phone);
-                params.put("fio", AuthActivity.fio);
-                params.put("guid", AuthActivity.guid);
-                return params;
-            }
-        };
+        }) {};
         Log.d("stringRequest!!!", stringRequest.toString());
         requestQueue.add(stringRequest);
     }
@@ -130,7 +121,8 @@ public class CodeActivity extends AppCompatActivity {
     public void postValidCode() {
         RequestQueue requestQueue = Volley.newRequestQueue(CodeActivity.this);
         String url = getResources().getString(R.string.app_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        url = url + "&q=validCode&code=" + code.toString() +"&session=" + session.toString();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("ValidCode: Response!", response);
@@ -155,16 +147,7 @@ public class CodeActivity extends AppCompatActivity {
                 Log.d("ValidCode: Er.Response!", error.toString());
                 printMessage("Ошибка");
             }
-        }) {
-            @Override
-            public Map getParams() {
-                Map params = new HashMap();
-                params.put("q", "validCode");
-                params.put("code", code);
-                params.put("session", session);
-                return params;
-            }
-        };
+        }) {};
         Log.d("ValidCode: strRequest!", stringRequest.toString());
         requestQueue.add(stringRequest);
     }

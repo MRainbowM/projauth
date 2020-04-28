@@ -6,6 +6,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -86,7 +87,23 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void handleResult(Result rawResult) {
         QR = rawResult.getText();
-        sendData();
+        String strQR = "";
+        try {
+            byte[] qr = Base64.decode(MainActivity.QR, Base64.DEFAULT);
+            strQR = new String(qr);
+        } catch (Exception e) {
+            printMessage("Некорректный QR-код!");
+        }
+
+        try {
+            JSONObject jsonQR = new JSONObject(strQR);
+            String guid = jsonQR.getString("guid");
+            sendData();
+        } catch (JSONException e) {
+            printMessage("Некорректный QR-код!");
+            scannerStart();
+            e.printStackTrace();
+        }
     }
 
     private void init() {
@@ -101,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         getSession();
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         String url = getResources().getString(R.string.app_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        url = url + "&q=checkQr&qr=" + MainActivity.QR + "&session=" + session.toString();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("checkQr: Response!", response);
@@ -125,23 +144,17 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             public void onErrorResponse(VolleyError error) {
                 Log.d("checkQr: error!", error.toString());
                 NetworkResponse networkResponse = error.networkResponse;
-                if(networkResponse.statusCode == 401) {
+                if(networkResponse != null && networkResponse.statusCode == 401) {
                     printMessage("Необходима авторизация");
                     openAuth();
-                } else {
+                } else if(networkResponse != null && networkResponse.statusCode != 200) {
+                    printMessage("Сервер недоступен  (Status code: " + networkResponse.statusCode + ")");
                     scannerStart();
+                } else if(networkResponse == null ) {
+                    printMessage("Ошибка URL");
                 }
             }
-        }) {
-            @Override
-            public Map getParams() {
-                Map params = new HashMap();
-                params.put("q","checkQr");
-                params.put("qr", MainActivity.QR);
-                params.put("session", session);
-                return params;
-            }
-        };
+        }) {};
         requestQueue.add(stringRequest);
     }
 
