@@ -66,12 +66,14 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void postStartLogin() {
+        Load.download(this);
         RequestQueue requestQueue = Volley.newRequestQueue(AuthActivity.this);
         String url = getResources().getString(R.string.app_url);
         url = url + "&q=startLogin&ph=" + AuthActivity.phone.toString() + "&fio=" + AuthActivity.fio.toString() + "&guid=" + AuthActivity.guid.toString();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Load.progress.hide();
                 Log.d("Response!!!", response);
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
@@ -92,6 +94,7 @@ public class AuthActivity extends AppCompatActivity {
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
+                Load.progress.hide();
                 Log.d("Error.Response!!!", error.toString());
             }
         }) {};

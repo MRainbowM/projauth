@@ -3,6 +3,7 @@ package ru.oasis38.projauth;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private Button btnSend;
 
     public static SharedPreferences pref;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void sendData() {
+        Load.download(this);
         getSession();
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         String url = getResources().getString(R.string.app_url);
@@ -123,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Load.progress.hide();
                 Log.d("checkQr: Response!", response);
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
@@ -142,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
+                Load.progress.hide();
                 Log.d("checkQr: error!", error.toString());
                 NetworkResponse networkResponse = error.networkResponse;
                 if(networkResponse != null && networkResponse.statusCode == 401) {
@@ -171,4 +178,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private void printMessage(String msg) {
         Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
+
+
 }

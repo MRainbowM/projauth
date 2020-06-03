@@ -26,12 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CodeActivity extends AppCompatActivity {
-    private TextView tvTimer;
+    private TextView tvTimer, tvPhone;
     private Button btnRepeatSend;
     private Integer waiting;
     private String session;
     private EditText etCode;
     private String code;
+    private String phone;
+
 
     private SharedPreferences pref;
 
@@ -43,8 +45,14 @@ public class CodeActivity extends AppCompatActivity {
         btnRepeatSend = (Button)findViewById(R.id.btnRepeatSend);
         btnRepeatSend.setEnabled(false);
         etCode = (EditText)findViewById(R.id.etCode);
+        tvPhone = (TextView)findViewById(R.id.tvPhone);
+
+
         waiting = AuthActivity.waiting;
         session = AuthActivity.session;
+        phone = AuthActivity.phone;
+
+        tvPhone.setText(phone);
 
         runTimer();
     }
@@ -61,7 +69,10 @@ public class CodeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                         waiting = waiting - 1;
-                        tvTimer.setText(waiting.toString());
+                        Integer min = waiting/60;
+                        Integer sec = waiting - min * 60;
+                        String time = min.toString() + ':' + sec.toString();
+                        tvTimer.setText(time);
                         if(waiting == 0) {
                             btnRepeatSend.setEnabled(true);
                         }
@@ -89,12 +100,14 @@ public class CodeActivity extends AppCompatActivity {
 
 
     public void postStartLogin() {
+        Load.download(this);
         RequestQueue requestQueue = Volley.newRequestQueue(CodeActivity.this);
         String url = getResources().getString(R.string.app_url);
         url = url + "&q=startLogin&ph=" + AuthActivity.phone.toString() + "&fio=" + AuthActivity.fio.toString() + "&guid=" + AuthActivity.guid.toString();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Load.progress.hide();
                 Log.d("Response!!!", response);
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
@@ -111,6 +124,7 @@ public class CodeActivity extends AppCompatActivity {
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
+                Load.progress.hide();
                 Log.d("Error.Response!!!", error.toString());
             }
         }) {};
@@ -119,12 +133,14 @@ public class CodeActivity extends AppCompatActivity {
     }
 
     public void postValidCode() {
+        Load.download(this);
         RequestQueue requestQueue = Volley.newRequestQueue(CodeActivity.this);
         String url = getResources().getString(R.string.app_url);
         url = url + "&q=validCode&code=" + code.toString() +"&session=" + session.toString();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Load.progress.hide();
                 Log.d("ValidCode: Response!", response);
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
@@ -144,6 +160,7 @@ public class CodeActivity extends AppCompatActivity {
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error) {
+                Load.progress.hide();
                 Log.d("ValidCode: Er.Response!", error.toString());
                 printMessage("Ошибка");
             }
